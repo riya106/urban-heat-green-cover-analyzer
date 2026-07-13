@@ -1,0 +1,99 @@
+# 🌳 Adaptive Urban Heat & Green Cover Analyzer
+
+An AI-assisted geospatial tool that identifies urban heat hotspots with low vegetation cover using free satellite imagery, and estimates how many trees would be needed to cool those areas down — for **any location**, not just one fixed city.
+
+Built and validated using a real case study in **Greater Noida, India**.
+
+---
+
+## 🎯 What This Project Does
+
+Cities in India face two connected problems: **rising urban heat** and **shrinking green cover**. This tool combines two independent satellite datasets to automatically find the exact locations where both problems overlap — the highest-impact spots for tree-planting interventions.
+
+The pipeline:
+
+1. **Pulls Sentinel-2 satellite imagery** and calculates NDVI (a vegetation density score) for a chosen area
+2. **Pulls Landsat 8 thermal imagery** and calculates real surface temperature (LST) for the same area
+3. **Automatically calculates "hot" and "low vegetation" thresholds relative to that specific area's own average** — so the tool works correctly whether you point it at a desert city, a hill station, or a green campus, without needing to manually tune numbers each time
+4. **Finds the overlap** — zones that are both hotter-than-average AND less vegetated than average
+5. **Calculates the total area** of these priority zones (in hectares)
+6. **Estimates the number of trees** needed to green those zones, at both a theoretical maximum and a realistic (40% plantable) coverage level
+
+---
+
+## 📍 Case Study: Greater Noida (Galgotias College area)
+
+Using a 3km radius test area:
+
+| Metric | Result |
+|---|---|
+| Average NDVI (vegetation density) | 0.344 |
+| Average Surface Temperature | 36.83°C |
+| Priority Zone Area (hot + low vegetation) | ~405–442 hectares (~15% of test area) |
+| Estimated trees needed (realistic coverage) | ~65,000–70,000 |
+
+The priority zones identified by the tool aligned closely with the **Gamma sector industrial area** — a real-world sanity check, since industrial zones with heavy concrete and low vegetation are expected to run hotter than surrounding land.
+
+See [`/results`](./results) for map screenshots from this test run.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Google Earth Engine** (JavaScript API) — satellite data access and processing
+- **Sentinel-2 (ESA/Copernicus)** — vegetation/NDVI data, 10m resolution
+- **Landsat 8/9 Collection 2** (USGS/NASA) — thermal/surface temperature data
+- Free and open — no paid APIs required
+
+---
+
+## 🚀 How to Run This Yourself
+
+See [`USAGE.md`](./USAGE.md) for full step-by-step instructions. In short:
+
+1. Sign up for [Google Earth Engine](https://earthengine.google.com) (free for academic/non-commercial use)
+2. Open the [Earth Engine Code Editor](https://code.earthengine.google.com)
+3. Copy-paste [`adaptive_green_cover_analyzer.js`](./adaptive_green_cover_analyzer.js)
+4. Change the coordinates at the top of the script to your area of interest
+5. Click **Run**
+
+No installation, no local setup — everything runs in the browser.
+
+---
+
+## 📐 Methodology Notes & Limitations
+
+Being transparent about the current scope, since honesty here matters more than overselling:
+
+- **Tree spacing assumption**: The "trees needed" calculation uses an estimated 25 m² of canopy spacing per mature tree. This is a reasonable planning-level assumption, not a precisely sourced constant — a future version would replace this with region-specific afforestation density guidelines.
+- **No ground-truth validation yet**: Results are based purely on satellite-derived data. A stronger version would cross-validate against real, station-based AQI/temperature readings (e.g., from CPCB or AQICN) near the test area.
+- **Species recommendations**: Not yet integrated into this script version. Species selection (e.g., neem, peepal, banyan — shown effective in Indian pollution-tolerance studies) is a planned addition.
+- **Resolution limits**: Sentinel-2 (10m) and Landsat (30m thermal) can't resolve individual small plants — this tool measures vegetation *density*, not individual tree counts.
+
+---
+
+## 🗺️ Roadmap
+
+- [x] NDVI vegetation density calculation
+- [x] Landsat surface temperature calculation
+- [x] Adaptive (self-calibrating) hot/low-vegetation thresholds
+- [x] Priority zone area calculation
+- [x] Trees-needed estimation
+- [ ] Region-specific tree species recommendations
+- [ ] Cross-validation against real AQI monitoring station data
+- [ ] Simple web interface (search a city → see results) — in progress
+- [ ] Pollutant (PM2.5) absorption estimates using published research constants
+
+---
+
+## 👩‍💻 Author
+
+Built by Riya Tyagi, B.Tech CSE (AI & ML), Galgotias College of Engineering and Technology.
+
+Part of an ongoing exploration into applying AI and remote sensing to real environmental problems in Indian cities.
+
+---
+
+## 📄 License
+
+MIT License — see [`LICENSE`](./LICENSE) for details.
